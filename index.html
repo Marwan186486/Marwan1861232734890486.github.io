@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار المفردات (AOU Level 2 - Unit 4)</title>
+    
+    <!-- Google Fonts: Tajawal -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* CSS Styles */
+        :root {
+            --primary-color: #4a5568;  /* Cool Gray */
+            --primary-hover: #2d3748;
+            --secondary-color: #718096;
+            --correct-color: #38a169;  /* Green */
+            --correct-glow: rgba(56, 161, 105, 0.5 );
+            --incorrect-color: #e53e3e; /* Red */
+            --incorrect-glow: rgba(229, 62, 62, 0.5);
+            --background-color: #f7fafc;
+            --container-bg: #ffffff;
+            --text-color: #2d3748;
+            --border-color: #e2e8f0;
+            --border-radius: 15px;
+            --box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .quiz-container {
+            background-color: var(--container-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 800px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
+        }
+
+        .quiz-header {
+            padding: 1.5rem 2rem;
+            background-color: var(--container-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quiz-header h2 {
+            margin: 0;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .live-scores {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .score-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .score-item span {
+            font-weight: 700;
+        }
+        #correct-score { color: var(--correct-color); }
+        #incorrect-score { color: var(--incorrect-color); }
+
+        .progress-container {
+            width: 100%;
+            background-color: var(--border-color);
+            height: 8px;
+            display: flex;
+        }
+        #progress-correct {
+            background-color: var(--correct-color);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease-in-out;
+        }
+        #progress-incorrect {
+            background-color: var(--incorrect-color);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .quiz-body {
+            padding: 2.5rem;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #question-text {
+            font-size: 1.5rem;
+            margin-bottom: 2.5rem;
+            text-align: center;
+            line-height: 1.7;
+            direction: ltr;
+            font-weight: 500;
+        }
+
+        .answers-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .answer-btn {
+            background-color: var(--container-bg);
+            color: var(--primary-color);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            direction: ltr;
+        }
+
+        .answer-btn:hover:not(:disabled) {
+            border-color: var(--primary-color);
+            background-color: #f8fafc;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        
+        .answer-btn:disabled {
+            cursor: not-allowed;
+        }
+        
+        .answers-list.answered .answer-btn:not(.correct):not(.incorrect) {
+            opacity: 0.5;
+        }
+
+        .answer-btn.correct {
+            background-color: var(--correct-color);
+            border-color: var(--correct-color);
+            color: white;
+            box-shadow: 0 0 15px var(--correct-glow);
+        }
+
+        .answer-btn.incorrect {
+            background-color: var(--incorrect-color);
+            border-color: var(--incorrect-color);
+            color: white;
+            box-shadow: 0 0 15px var(--incorrect-glow);
+        }
+
+        .navigation-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2.5rem;
+        }
+
+        .nav-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0.8rem 1.8rem;
+            font-size: 1rem;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .nav-btn:disabled {
+            background-color: #cbd5e0;
+            cursor: not-allowed;
+        }
+        
+        #next-btn.finish {
+            background-color: var(--correct-color);
+        }
+        
+        #next-btn.finish:hover:not(:disabled) {
+            background-color: #2f855a;
+        }
+
+        .score-container {
+            text-align: center;
+            padding: 4rem;
+            animation: fadeIn 0.5s;
+        }
+        .score-container h2 { font-size: 2.5rem; color: var(--primary-color); }
+        .score-container p { font-size: 1.5rem; color: var(--secondary-color); margin: 1rem 0 2rem 0; }
+
+        #restart-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #restart-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        @media (max-width: 600px) {
+            .answers-list { grid-template-columns: 1fr; }
+            .quiz-body { padding: 1.5rem; }
+            #question-text { font-size: 1.3rem; }
+            .header-content { flex-direction: column; gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container" id="quiz-container">
+        <div class="quiz-header">
+            <div class="header-content">
+                <h2>AOU L2 - U4 Vocabulary</h2>
+                <div class="live-scores">
+                    <div class="score-item" id="correct-score">✔️ <span id="correct-count">0</span></div>
+                    <div class="score-item" id="incorrect-score">❌ <span id="incorrect-count">0</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="progress-container">
+            <div id="progress-correct"></div>
+            <div id="progress-incorrect"></div>
+        </div>
+        <div class="quiz-body" id="quiz-body">
+            <h3 id="question-text">Loading...</h3>
+            <ul class="answers-list" id="answers-list"></ul>
+            <div class="navigation-controls">
+                <button class="nav-btn" id="prev-btn">السابق</button>
+                <button class="nav-btn" id="next-btn">التالي</button>
+            </div>
+        </div>
+        <div class="score-container" id="score-container" style="display: none;">
+            <h2>انتهى الاختبار!</h2>
+            <p id="score-text">نتيجتك النهائية هي...</p>
+            <button id="restart-btn">إعادة الاختبار</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. عناصر الواجهة
+            const elements = {
+                questionText: document.getElementById('question-text'),
+                answersList: document.getElementById('answers-list'),
+                quizBody: document.getElementById('quiz-body'),
+                scoreContainer: document.getElementById('score-container'),
+                scoreText: document.getElementById('score-text'),
+                restartBtn: document.getElementById('restart-btn'),
+                nextBtn: document.getElementById('next-btn'),
+                prevBtn: document.getElementById('prev-btn'),
+                correctCount: document.getElementById('correct-count'),
+                incorrectCount: document.getElementById('incorrect-count'),
+                progressCorrect: document.getElementById('progress-correct'),
+                progressIncorrect: document.getElementById('progress-incorrect'),
+            };
+
+            // 2. بنك الكلمات الجديد (28 كلمة)
+            const vocabulary = [
+                { term: "adjustable", definition: "(adjective) capable of being changed or adapted to different settings or sizes" },
+                { term: "available", definition: "(adjective) able to be used or obtained; present and ready for use" },
+                { term: "bookcase", definition: "(noun) a piece of furniture with shelves for storing books" },
+                { term: "bookshelf", definition: "(noun) a shelf or set of shelves for holding books" },
+                { term: "budget", definition: "(noun) a plan for managing and allocating money for specific purposes" },
+                { term: "chair", definition: "(noun) a piece of furniture designed for sitting on" },
+                { term: "chest of drawers", definition: "(noun) a piece of furniture with multiple drawers for storing clothes" },
+                { term: "cosy", definition: "(adjective) warm, comfortable and inviting, often describing a pleasant atmosphere" },
+                { term: "debit card", definition: "(noun) a plastic card used to make payments directly from a bank account" },
+                { term: "deep", definition: "(adjective) extending far downward or inward; having a considerable depth" },
+                { term: "desk", definition: "(noun) a piece of furniture with a flat surface for writing, working or studying" },
+                { term: "drawer", definition: "(noun) a sliding storage compartment in a piece of furniture" },
+                { term: "furniture", definition: "(noun) movable objects used to make a space suitable for living or working" },
+                { term: "natural", definition: "(adjective) existing in or derived from nature; not made or altered by humans" },
+                { term: "over there", definition: "(adverb) at a location some distance away, indicated by the speaker" },
+                { term: "proposal", definition: "(noun) a formal suggestion or plan for consideration or action" },
+                { term: "qualitative", definition: "(adjective) related to the quality or characteristics of something, rather than its quantity" },
+                { term: "quantitative", definition: "(adjective) related to the quantity or amount of something, rather than its quality" },
+                { term: "robust", definition: "(adjective) strong and healthy; sturdy and able to withstand pressure or damage" },
+                { term: "shelf", definition: "(noun) a flat horizontal surface used for placing or storing objects" },
+                { term: "solution", definition: "(noun) an answer or resolution to a problem or challenge" },
+                { term: "storage", definition: "(noun) the act or process of keeping and storing items for future use" },
+                { term: "suitable", definition: "(adjective) appropriate or fitting for a particular purpose or situation" },
+                { term: "supply", definition: "(verb) to provide or make available for use" },
+                { term: "toilet", definition: "(noun) a fixture used for the disposal of bodily waste, typically with a seat and flush" },
+                { term: "try on", definition: "(verb) to put on clothing or an item to see how it fits or looks" },
+                { term: "washbasin", definition: "(noun) a bowl-shaped container with a faucet for washing hands and face" },
+                { term: "width", definition: "(noun) the measurement of the extent of something from one side to the other" }
+            ];
+
+            // 3. متغيرات الحالة
+            let questions = [];
+            let userAnswers = [];
+            let currentQuestionIndex;
+
+            // 4. الوظائف
+            function createQuestions() {
+                questions = vocabulary.map(correctItem => {
+                    const incorrectItems = vocabulary.filter(item => item.term !== correctItem.term).sort(() => 0.5 - Math.random()).slice(0, 3);
+                    const answers = [{ text: correctItem.term, correct: true }, ...incorrectItems.map(item => ({ text: item.term, correct: false }))];
+                    return { question: correctItem.definition, answers: answers.sort(() => 0.5 - Math.random()) };
+                });
+            }
+
+            function startQuiz() {
+                currentQuestionIndex = 0;
+                userAnswers = new Array(questions.length).fill(null);
+                questions.sort(() => Math.random() - 0.5);
+                
+                elements.scoreContainer.style.display = 'none';
+                elements.quizBody.style.display = 'block';
+                
+                updateLiveScores();
+                showQuestion(currentQuestionIndex);
+            }
+
+            function showQuestion(index) {
+                resetState();
+                const question = questions[index];
+                elements.questionText.innerText = question.question;
+
+                question.answers.forEach(answer => {
+                    const button = document.createElement('button');
+                    button.innerText = answer.text;
+                    button.classList.add('answer-btn');
+                    button.dataset.correct = answer.correct;
+                    
+                    if (userAnswers[index] !== null) {
+                        elements.answersList.classList.add('answered');
+                        button.disabled = true;
+                        if (button.innerText === userAnswers[index].selected) {
+                            button.classList.add(userAnswers[index].isCorrect ? 'correct' : 'incorrect');
+                        }
+                        if (button.dataset.correct === 'true' && !userAnswers[index].isCorrect) {
+                            button.classList.add('correct');
+                        }
+                    } else {
+                        button.addEventListener('click', selectAnswer);
+                    }
+                    elements.answersList.appendChild(button);
+                });
+                updateNavigation();
+            }
+
+            function selectAnswer(e) {
+                const selectedBtn = e.target;
+                const isCorrect = selectedBtn.dataset.correct === 'true';
+                
+                userAnswers[currentQuestionIndex] = { selected: selectedBtn.innerText, isCorrect: isCorrect };
+
+                elements.answersList.classList.add('answered');
+                Array.from(elements.answersList.children).forEach(button => {
+                    button.disabled = true;
+                    if (button.dataset.correct === 'true') {
+                        button.classList.add('correct');
+                    }
+                });
+                if (!isCorrect) {
+                    selectedBtn.classList.add('incorrect');
+                }
+                
+                updateNavigation();
+                updateLiveScores();
+            }
+
+            function updateNavigation() {
+                elements.prevBtn.disabled = currentQuestionIndex === 0;
+
+                if (userAnswers[currentQuestionIndex] === null) {
+                    elements.nextBtn.disabled = true;
+                } else {
+                    elements.nextBtn.disabled = false;
+                    if (currentQuestionIndex === questions.length - 1) {
+                        elements.nextBtn.innerText = 'إنهاء الاختبار';
+                        elements.nextBtn.classList.add('finish');
+                    } else {
+                        elements.nextBtn.innerText = 'التالي';
+                        elements.nextBtn.classList.remove('finish');
+                    }
+                }
+            }
+
+            function updateLiveScores() {
+                const correctAnswers = userAnswers.filter(a => a?.isCorrect).length;
+                const incorrectAnswers = userAnswers.filter(a => a !== null && !a.isCorrect).length;
+                
+                elements.correctCount.innerText = correctAnswers;
+                elements.incorrectCount.innerText = incorrectAnswers;
+
+                const correctPercentage = (correctAnswers / questions.length) * 100;
+                const incorrectPercentage = (incorrectAnswers / questions.length) * 100;
+
+                elements.progressCorrect.style.width = `${correctPercentage}%`;
+                elements.progressIncorrect.style.width = `${incorrectPercentage}%`;
+            }
+
+            function showScore() {
+                elements.quizBody.style.display = 'none';
+                elements.scoreContainer.style.display = 'block';
+                const finalScore = userAnswers.filter(a => a?.isCorrect).length;
+                elements.scoreText.innerText = `نتيجتك النهائية هي ${finalScore} من ${questions.length}`;
+            }
+
+            function resetState() {
+                elements.answersList.classList.remove('answered');
+                elements.quizBody.style.animation = 'none';
+                void elements.quizBody.offsetWidth; // Trigger reflow
+                elements.quizBody.style.animation = 'fadeIn 0.5s ease-in-out';
+                while (elements.answersList.firstChild) {
+                    elements.answersList.removeChild(elements.answersList.firstChild);
+                }
+            }
+
+            // 5. ربط الأحداث
+            elements.nextBtn.addEventListener('click', () => {
+                if (currentQuestionIndex < questions.length - 1) {
+                    currentQuestionIndex++;
+                    showQuestion(currentQuestionIndex);
+                } else {
+                    showScore();
+                }
+            });
+
+            elements.prevBtn.addEventListener('click', () => {
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    showQuestion(currentQuestionIndex);
+                }
+            });
+
+            elements.restartBtn.addEventListener('click', startQuiz);
+
+            // 6. بدء التشغيل
+            createQuestions();
+            startQuiz();
+        });
+    </script>
+
+</body>
+</html>
